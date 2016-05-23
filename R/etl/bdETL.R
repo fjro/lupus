@@ -1,12 +1,11 @@
-require(gdata)
+library(gdata)
+library(readr)
 
 #read the data
-genes = read.csv('genes.csv', header =T)
-options( stringsAsFactors=F ) 
-bd <- read.csv("Big Data.csv", header = T)
+genes <- read_csv('genes.csv', header =T)
+bd <- read_csv("Big Data.csv", header = T)
 rownames(bd) = bd[,1]
 bd = bd[,-1]
-?read.csv2
 typeof(bd[3,3])
 table(genes$diseased)
 samples <- read.table("Sample Map.csv", as.is = T)
@@ -17,7 +16,7 @@ colnames(bd) = bd[1,]
 bd=bd[-1,]
 dim(bd)
 length(bd[,1])
-b
+
 
 #pull out the sample names
 controlNames = table(substr(samples[samples$Color=='GREEN',]$Sample,0,6))

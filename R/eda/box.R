@@ -1,6 +1,6 @@
 #boxplots of all genes separated into patients and controls
 library(ggplot2)
-library(reshape)
+library(reshape2)
 
 #need to reshape the data first for ggplot
 #this creates a new 3 column data.frame. The columns are Gene= the name of the gene; 
