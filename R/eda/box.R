@@ -18,16 +18,20 @@ bp + theme(axis.text.x=element_text(angle=270, vjust = 0.5))
 #lupus patients have very high expression levels for many of these genes. Additionally many of genes have unusually large observations 
 # as defined by the IQR rule
 
+#look at multivariate differences between lupus patients and controls
 library(andrews)
+library(rafalib)
 andrews(genes[,-1],clr=95)
-par(mfrow=c(2,1))
+mypar(mfrow=c(2,1))
 andrews(controls[,-1],type=4)
 andrews(lupus[,-1],type=4)
 
-allCM <- cor(as.matrix(genes[,c(-1,-ncol(genes))]))
+#look at diffs in correlation between lupus and controls
+library(corrplot)
+allCM <- cor(as.matrix(genes[,-c(1,96,97)]))
+controlCM <- cor(as.matrix(controls[,-c(1,96,97)]))
+lupusCM <- cor(as.matrix(lupus[,-c(1,96,97)]))
 
-corrplot(cor(lupus[,-c(1,2,ncol(lupus))]),tl.pos='d', order = "original", method="color", type='upper',tl.cex=.5)
-corrplot(cor(controls[,-c(1,2,ncol(controls))]),tl.pos='d', order = "original", method="color", type='upper',tl.cex=.5)
-
-controlCM <- cor(as.matrix(controls[,c(-1,-ncol(genes))]))
-lupusCM <- cor(as.matrix(lupus[,c(-1,-ncol(genes))]))
+mypar(mfrow=c(1,1))
+corrplot(controlCM,tl.pos='d', order = "original", method="color", type='upper',tl.cex=.5)
+corrplot(lupusCM,tl.pos='d', order = "original", method="color", type='upper',tl.cex=.5)
