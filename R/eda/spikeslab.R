@@ -1,6 +1,6 @@
-#install.packages('spikeslab')
-require(spikeslab)
-?spikeslab
+#A Bayesian assesment of non-linear associations in the lupus data
+library(spikeslab)
+
 colnames(genes)
 y = genes$diseased == "Control"
 x = genes[,-c(1,96)]
@@ -25,11 +25,8 @@ varImpPlot(rf.obj)
 
 ##############################################
 #spike slab gam
-install.packages('spikeSlabGAM')
-require(spikeSlabGAM)
-?spikeSlabGAM
-
-set.seed(91179)
+library(spikeSlabGAM)
+set.seed(100)
 n <- 400
 d <- data.frame(f1 = sample(gl(3, n/3)), f2 = sample(gl(4,
                                                         n/4)), x1 = runif(n), x2 = runif(n), x3 = runif(n))
@@ -106,5 +103,4 @@ summary(m3)
 plot(m3)                                                       
 
 predict(m3, newdata= g2[-testg,],type='terms')
-?predict.spikeSlabGAM
 testg = c(sample(1:53, 37), sample(54:420, 257))
