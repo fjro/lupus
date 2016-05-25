@@ -66,14 +66,12 @@ m2 <- spikeSlabGAM(yp ~ x1 * (x2 + f1) + (x2 + x3 + f2)^2 -
 summary(m2)
 plot(m2)
 
-# quick&dirty convergence diagnostics:
+# quick & dirty convergence diagnostics:
 print(b <- ssGAM2Bugs(m1))
 plot(b)
 
-## End(Not run)
 
 # fit & display the model:
-#xnam <- paste0("x", 1:25)
 xnam = c('x1', 'x2', 'f1', 'f2')
 (fmla <- as.formula(paste("y ~ ", paste(xnam, collapse= "+"))))
 m1 <- spikeSlabGAM(y ~ x1 * f1 + f1 * f2 + x3 * f1 +   x1 * x2, data = d)
@@ -103,4 +101,5 @@ summary(m3)
 plot(m3)                                                       
 
 predict(m3, newdata= g2[-testg,],type='terms')
+
 testg = c(sample(1:53, 37), sample(54:420, 257))

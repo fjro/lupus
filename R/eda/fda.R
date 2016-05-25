@@ -1,6 +1,7 @@
-#install.packages('mda')
+#classification andvariable importance using Flexible Discriminant Analysis to assess how the amount of 
+#'curvature' effects t classification accuracy.
 library(mda)
-require(xtable)
+library(xtable)
 
 #first classify by disease
 fit = fda(data=genes[,-c(1,97)],diseased~.,method=mars)
@@ -15,10 +16,9 @@ fit$confusion
 #only a single dimension so no plot
 predictions <- predict(fit, genes[,-c(1,97)])
 
-#latex
+#print  a latex table
 x.small <- xtable(fit$confusion, label = 'tabsmall', caption = 'FDA confusion matrix for disease classification')
 print(x.small,latex.environments = "",table.placement = 'h')
-
 
 
 #now classify types
@@ -34,7 +34,6 @@ print(x.small,latex.environments = "",table.placement = 'h')
 
 coef(fit)
 
-library(mda)
 (fda <- fda(Species~., data=iris, keep.fitted=TRUE, method=earth, keepxy=TRUE))
 summary(fda$fit) # examine earth model embedded in fda model
 plot(fda) # right side of the figure
@@ -49,8 +48,7 @@ plotmo(fda$fit, nresponse=2, clip=F) # earth in FDA, 2nd disc var (not shown)
 #The graphs show the contribution of each predictor to the first discriminant variable.
 
 ##################
-require(earth)
-?earth
+library(earth)
 earthsimple = genes[,-c(1,97)]
 colnames(simple)[1:94] = 1:94 
 (fda <- fda(diseased~.,simple, keep.fitted=TRUE, method=earth, keepxy=TRUE, degree=1, linpreds=F))
@@ -74,18 +72,10 @@ plot(simple$'14', simple$'94')
 
 #now try type
 
-
-
 #We can also look at the earth model embedded in the FDA model:
 plotmo(fda$fit, nresponse=1, clip=F,trace=1) # earth in FDA, 1st disc var (Figure 6)
 #The graphs show the contribution of each predictor to the first discriminant variable.
 plotmo(fda$fit, clip=F,caption="")
-?plotmo
-
-
-
-
-
 
 ##try glm
 # equivalent but using earth.default
