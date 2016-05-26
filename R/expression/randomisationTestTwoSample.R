@@ -1,7 +1,8 @@
 attach(genes)
-require(ggplot2)
+library(ggplot2)
 
-res <- apply(genes[,-c(1,96)], 2, function(c) t.test(c)$statistic)
+?t.test
+res <- apply(genes[,-c(1,96, 97)], 2, function(c) t.test(c)$statistic)
 plot(res)
 
 #ranks the individuals by gene expression level
@@ -118,7 +119,7 @@ fdr <- function(p_values, q)
     }
     else
     {
-      p_critical <-0
+      p_critical <- 0
     }
   }
   list(Critical = p_critical, Index=index)
