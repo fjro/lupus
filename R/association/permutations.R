@@ -1,35 +1,44 @@
+#Workflow for measuring all possible 3 way associations (X ~ Y, Z etc.) 
+
 library(gtools)
 library(stringi)
 library(energy)
 library(matie)
-pr = permutations(4, 3, letters[1:4], repeats.allowed = F)
 
-pr = data.frame(permutations(94, 3, 1:94, repeats.allowed = F))
-pr = cbind(pr, rep(0,nrow(pr)))
-#pr = cbind(pr, paste(pr[,2], pr[,3], sep=":"))
-#pr[,4] = order(pr[,4])
+#first evaluate the indices of all possible 3 way associations
+pr <- data.frame(permutations(94, 3, 1:94, repeats.allowed = F))
+colnames(pr) <- c('X','Y','Z')
+pr$Triplet <- rep(0,nrow(pr))
 
-colnames(pr) = c('X','Y','Z','Pair')
-  
-
-for(i in 1:nrow(pr))
-{
-  ss = sort(c(pr[i,2],pr[i,3]))
-  pr[i,4] = paste(pr[i,1],ss[1], ss[2], sep=":")
+#' Forms symmetric triplets of indices
+#' 
+#' @param row The dataframe row
+#' @return The triplet indices
+triplet <- function(row) {
+  ss <- sort(row[2:3])
+  paste(row[1],ss[1], ss[2], sep=":")
 }
 
-dim(pr)
-dd = pr[!duplicated(pr$Pair), ]
+pr$Triplet <- apply(pr, 1, triplet)
+
+#now deduplicate them, recall that for some estimate of assoction, A, A(X ~ Y, Z) == A(X ~ Z, Y)
+dd <- pr[!duplicated(pr$Triplet), ]
 dim(dd)
-head(dd)
-write.csv(dd, "3way.csv")
+
+write.csv(dd, "output/3way.csv")
 dcor(controls[,20], controls[,3:4])
 dcov.test(controls[,20], controls[,3:4])$estimates[2]
 
-threeWay = function(model, data)
+#' Computes all 3 way association using dcor, A and R2 and also computes the residual
+#' non-linear association.
+#' 
+#' @param model A dataframe containing the indices of the 3 way associations.
+#' @param data The data.
+#' @return A dataframe with the results.
+threeWay <- function(model, data)
 {
-  n = nrow(model)
-  results = data.frame(rep(0, n), rep(0, n), rep(0, n), rep(0, n), rep(0, n))
+  n <- nrow(model)
+  results <- data.frame(rep(0, n), rep(0, n), rep(0, n), rep(0, n), rep(0, n))
   colnames(results) = c('dcor', 'A', 'R2', 'nldcor', 'nlA')
   for(i in 1:n)
   {
@@ -54,8 +63,9 @@ threeWay = function(model, data)
   results
 }
 
-control3way = threeWay(dd, controls[,-c(1,96)]) 
-lupus3way = threeWay(dd, lupus[,-c(1,96)])
+#evaluate the 3 way associations separately for each group and also combined.
+control3way <- threeWay(dd, controls[,-c(1,96)]) 
+lupus3way <- threeWay(dd, lupus[,-c(1,96)])
 
 
 summary(lm(genes[,2] ~ genes[,3] * genes[,4]))
@@ -73,12 +83,12 @@ colnames(lupus3way)[10] = 'Disease'
 
 both3way = rbind(control3way, lupus3way)
 
-write.csv(control3way, "control3way.csv")
-write.csv(lupus3way, "lupus3way.csv")
-write.csv(both3way, "both3way.csv")
+write.csv(control3way, "output/control3way.csv")
+write.csv(lupus3way, "output/lupus3way.csv")
+write.csv(both3way, "output/both3way.csv")
 
-lupus3way = read.csv('lupus3way.csv')
+lupus3way = read.csv('output/lupus3way.csv')
 lupus3way = lupus3way[,-1]
 
-control3way = read.csv('control3way.csv')
+control3way = read.csv('output/control3way.csv')
 control3way = control3way[,-1]
