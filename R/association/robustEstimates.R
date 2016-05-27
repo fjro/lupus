@@ -1,3 +1,170 @@
+#Bootstrapped estimates of mean and sd of 2 and 3 way associations. 
+
+library(plyr)
+library(energy)
+library(minerva)
+library(matie)
+
+tmpfun <- function() 
+{
+  fff = function(df) 
+  {
+    data.frame( Petal.Width=df$Petal.Width, Sepal.Width=sample(df$Sepal.Width) ) 
+  } 
+  tmp <- ddply( iris, .(Species),fff)
+  dcor(tmp$Petal.Width, tmp$Sepal.Width)
+}
+?sample
+out <- c( dcor(iris$Petal.Width, iris$Sepal.Width), replicate(999, tmpfun()) )
+
+bdcor = function(x, y, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= dcor(bs[,1], bs[,2])
+    
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+bcor = function(x, y, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= cor(bs[,1], bs[,2])^2
+    
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+bmic = function(x, y, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= mine(bs[,1], bs[,2])$MIC
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+bA = function(x, y, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= ma(data.frame(bs[,1], bs[,2]))$A
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res), 'res' = res)
+  return(br)
+}
+
+bdcor3 = function(x, y, z, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y, z)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= dcor(bs[,1], bs[,2:3])
+    
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+bR23 = function(x, y, z, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y, z)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    lm.res = lm(bs[,1] ~ bs[,2] * bs[,3])
+    res[i]= summary(lm.res)$r.squared
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+bA3 = function(x, y, z, n = 1000)
+{
+  n = 1000
+  jj = cbind(x,y, z)
+  
+  res = rep(0,n)
+  
+  for (i in 1:n)
+  {
+    bs = jj[sample(nrow(jj), replace = T), ]
+    res[i]= ma(data.frame(bs[,2],bs[,3],bs[,1]))$A
+  }
+  
+  br= list('Mean' = mean(res), 'SD' = sd(res))
+  return(br)
+}
+
+
+dcor(lupus[,4],lupus[,6:7])
+ffg = bdcor3(lupus[,4],lupus[,6], lupus[,7])
+ffg$Mean
+ffg$SD
+
+ffg = bcor(lupus[,4],lupus[,6])
+ffg$Mean
+ffg$SD
+
+ffg = bmic(lupus[,4],lupus[,6])
+ffg$Mean
+ffg$SD
+
+ffg = bA(lupus[,4],lupus[,6])
+ffg$Mean
+ffg$SD
+
+ffg = bA3(lupus[,4],lupus[,6], lupus[,7])
+ffg$Mean
+ffg$SD
+
+ffg = bR23(lupus[,4],lupus[,6], lupus[,7])
+ffg$Mean
+ffg$SD
 
 dim(lupus)
 lll = data.frame(lll)

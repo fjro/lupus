@@ -1,11 +1,9 @@
-#install.packages('earth')
-require(earth)
+library(earth)
+library(pROC)
 
-
-?earth
-y = genes$diseased
-x = genes[,-c(1,34,96)]
-fit1= earth(y=y, x=x,glm=list(family=binomial), degree=2)
+y <- genes$diseased
+x <- genes[,-c(1,34,96)]
+fit1 <- earth(y=y, x=x,glm=list(family=binomial), degree=2)
 summary(fit1)
 plot(fit1$glm.list[[1]], info=T) 
 plotd(fit1, hist = T)
@@ -38,9 +36,8 @@ roc1
 sum(ytest != preds)
 
 names(evimp(fit, trim=T))
-#ROC
-#install.packages("pROC")
-library(pROC)
+
+
 preds=predict(fit1)
 roc1=roc(y ~ preds)
 
@@ -57,7 +54,6 @@ roc1=roc(y ~ preds)
 roc1$auc
 plot(roc1)
 
-require(earth)
 preds=predict(earth(y = y, x = genes[,c(85,77)], degree=2, linpreds=F))
 roc1=roc(y ~ preds)
 roc1$auc
