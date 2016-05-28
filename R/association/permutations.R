@@ -1,4 +1,5 @@
-#Workflow for measuring all possible 3 way associations (X ~ Y, Z etc.) 
+#Workflow for measuring all possible 3 way associations (X ~ Y, Z etc.) between variables. A number of
+#association estimates are used and the non-linear residual association is also computed.
 
 library(gtools)
 library(stringi)
@@ -6,6 +7,7 @@ library(energy)
 library(matie)
 library(dplyr)
 library(microbenchmark)
+library(snowfall)
 
 #first evaluate the indices of all possible 3 way associations
 pr <- data.frame(permutations(94, 3, 1:94, repeats.allowed = F))
@@ -49,13 +51,14 @@ threeWayAll <- function(models, data, ncores = 'all') {
   
   sfInit( parallel=TRUE, cpus=ncores, slaveOutfile="log.txt")
   sfExport('threeWayAssociation')
-  
-  result <- rbindlist(sfLapply(models,
+  result <- rbindlist(sfApply(models, 1,
                                threeWayAssociation,
                                data = data))
   sfStop()
   cat("Finished at ", format(Sys.time(),usetz = TRUE), '\n')
-  as.data.frame(result)
+  result <- as.data.frame(result)
+  result <- cbind(models, result)
+  result
 }
 
 #' Computes a single set of 3 way association estimates for a given model.
@@ -63,13 +66,15 @@ threeWayAll <- function(models, data, ncores = 'all') {
 #' @param model The triplet of column indices to use.
 #' @param data The dataframe.
 #' @return A dataframe.
-threeWayAssociation <- function(model, data){
+threeWayAssociation <- function(model, data) {
+  require(energy)
+  require(matie)
   results <- data.frame(t(rep(0, 5)))
   colnames(results) = c('dcor', 'A', 'R2', 'nldcor', 'nlA')
-  X <- unlist(model[1])
-  Y <- unlist(model[2])
-  Z <- unlist(model[3])
-    
+  X <- as.numeric(model[1])
+  Y <- as.numeric(model[2])
+  Z <- as.numeric(model[3])
+ 
   #linear and nonlinear association
   results$dcor <- dcov.test(data[,X],data[,c(Y,Z)])$estimates[2]
   results$A <- ma(data.frame(data[,c(Y,Z)],data[,X]))$A
@@ -79,40 +84,23 @@ threeWayAssociation <- function(model, data){
   #residual nonlinear association
   results$nldcor <- dcov.test(res$residuals,data[,c(Y,Z)])$estimates[2]
   results$nlA <- ma(data.frame(data[,c(Y,Z)],res$residuals))$A
-    
   results
 }
 
-
-threeWayAssociation(pr[1,], data = data.frame(genes[, -c(1,96,97)]))
-threeWayAll(pr[1:10,], data = data.frame(genes[, -c(1,96,97)]))
+#run a benchmark to get a feel for the execution time
+microbenchmark(times = 1, thousand = threeWayAll(pr[1:1000,], data = data.frame(genes[, -c(1,96,97)])))
+#1000 associations takes about 136 seconds using 7 cores on an Intel I7 using Microsoft R Open
 
 #evaluate the 3 way associations separately for each group and also combined.
-control3way <- threeWay(dd, controls[,-c(1,96)]) 
-lupus3way <- threeWay(dd, lupus[,-c(1,96)])
+#there are about 400000 3 way associations so this needs to run overnight
+control3way <- threeWayAll(dd, data.frame(controls[,-c(1,96, 97)]))
+lupus3way <- threeWayAll(dd, data.frame(lupus[,-c(1,96, 97)]))
 
+#build up the results and save them to csv for later use.
+control3way$Disease <- rep('Control', nrow(dd))
+lupus3way$Disease <- rep('Lupus', nrow(dd))
+both3way <- rbind(control3way, lupus3way)
 
-summary(lm(genes[,2] ~ genes[,3] * genes[,4]))
-
-dim(dd)
-colnames(dd)
-colnames(control3way)
-control3way = cbind(control3way, dd)
-control3way = cbind(control3way, rep('Control', nrow(dd)))
-colnames(control3way)[10] = 'Disease'
-
-lupus3way = cbind(lupus3way, dd)
-lupus3way = cbind(lupus3way, rep('Lupus', nrow(dd)))
-colnames(lupus3way)[10] = 'Disease'
-
-both3way = rbind(control3way, lupus3way)
-
-write.csv(control3way, "output/control3way.csv")
-write.csv(lupus3way, "output/lupus3way.csv")
-write.csv(both3way, "output/both3way.csv")
-
-lupus3way = read.csv('output/lupus3way.csv')
-lupus3way = lupus3way[,-1]
-
-control3way = read.csv('output/control3way.csv')
-control3way = control3way[,-1]
+write.csv(control3way, "output/control3way.csv", row.names = F)
+write.csv(lupus3way, "output/lupus3way.csv", row.names = F)
+write.csv(both3way, "output/both3way.csv", row.names = F)
