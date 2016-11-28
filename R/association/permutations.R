@@ -88,7 +88,7 @@ threeWayAssociation <- function(model, data) {
 }
 
 #run a benchmark to get a feel for the execution time
-microbenchmark(times = 1, thousand = threeWayAll(pr[1:1000,], data = data.frame(genes[, -c(1,96,97)])))
+microbenchmark(times = 1, thousand = threeWayAll(dd, data = data.frame(genes[, -c(1,96,97)])))
 #1000 associations takes about 136 seconds using 7 cores on an Intel I7 using Microsoft R Open
 
 #evaluate the 3 way associations separately for each group and also combined.
