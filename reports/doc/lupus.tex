@@ -256,11 +256,9 @@ Thanks to Eleanor Stillman and Chris Harbron for their help with the project. Th
 \section{Motivation}
 \gls{BD} is a fashionable term currently sweeping through the corporate world. While not strictly defined, it typically refers to large, complex datasets that are too big to be managed using traditional methods. Depending on the definition different statistical and computational challenges are posed. Examples of big data within pharmaceutical research include gene expression data, medical histories and clinical trial data. Often these have many more parameters than observations so $p >> n$. The availability of these datasets combined with recent developments for identifying associations between variables offers the potential to improve biological understanding which can in turn aid in the development of treatments for different diseases. 
 
-%The term \gls{BD} has many definitions and is context dependent.  In this case the primary interest is in large biological datasets which typically have many more parameters than observations so the primary statistical challenge is to develop efficient methods for exploring very large numbers of relationships in relatively small sample sizes. 
-
 One of the main purposes of association analysis is to produce an ordered list of variable pairs ranked by the strength of association. Typically these would form the basis of a more in-depth statistical analysis or highlight areas for further investigation or experimentation. The size of the datasets raises challenges for exploratory association mining. For example, when investigating $n$ pairwise combinations of variables there are $\frac{1}{2} \times n \times (n-1)$ combinations so that even for a dataset of 100 variables, there are 4095 different pairs to be analysed. 
 
-A desirable property of estimators of association is that they can identify a range of different functional relationships equally and not for example be limited to just linear relationships, as is the case with Pearson correlation. % identify different types and strengths of non-linear relationships equally without biasing for particular types of relationships 
+A desirable property of estimators of association is that they can identify a range of different functional relationships equally and not for example be limited to just linear relationships, as is the case with Pearson correlation. 
 This has been highlighted as a potentially useful approach for studying gene expression where relationships may be determined by multiple distant factors  \cite{bigdata2012}. It is also important that different measures of association have sufficient statistical power when dealing with relatively small sample sizes. The situation becomes more complex when investigating multivariate associations or controlling for specific variables. Therefore automated, robust and efficient approaches to searching very large collections of variables are needed.
 
 \section{Objectives}
@@ -268,12 +266,6 @@ The objective of the project is to compare three different measures of associati
 
 \section{Overview of Dissertation}
 The remainder of this chapter reviews gene expression studies and lupus. Chapter 2 introduces the association measures studied and briefly reviews the concepts of dependence, association and non-linearity. Chapter 3 reports the results of a simulation study used to investigate the power of different association measures to detect dependence for a variety of functional relationships using various amounts of noise and sample sizes. Chapter 4 describes the given sample datasets and provides exploratory data analysis. Chapter 5 reports on the comparative association analysis using the training dataset. Chapter 6 reports on the comparative association analysis using the test dataset. Chapter 7 discusses the analysis and provides suggestions for further work. The Appendices provide ancillary material and code.
-
-
-
-%From nature MIC could be applied to analyse the relationship between the expression of a regressor and its target gene, as the dependence of both on global cellular resources such as polymerases enforces a positive relationship, whereas a negative relationship is enforced by their specific interaction. Thus, the positive and negative relationships are superimposed to produce a more complex relationship.MIC or related methods could be used for identifying pairwise relationships between transcription factors. For example, given a large collection of candidate regulatory regions identified by an open chromatin assay, such as DNaseI hypersensitivity, one could characterize each region with a vector of random variables indicating the presence of known regulatory motifs. MIC might then be used to identify pairs of factors that correlate with one another or with measured mRNA levels of proximal genes.
-
-
 
 \section{\gls{GE}}
 A detailed description of gene expression is beyond the scope of this report however the following brief overview is provided for background context and to draw attention to the possible sources of variation that can arise.
@@ -302,54 +294,9 @@ Epigenetics refers to biological changes in organisms caused by altered gene exp
 
 Improved understanding of the genetics of individuals susceptible to lupus could therefore suggest ways to  prevent the disease or help clarify the role of environmental stimuli in the disease pathology \cite{autoimmunePollard}.
 
-
-%\citet{BayesianGRN} assume the notion of sparsity in gene association studies which assumes that most gene interactions are negligible.
-
-
-%\section{\gls{BD}}
-%The term \gls{BD} has many definitions and is context dependent. Depending on the definition different statistical and computational challenges are posed. In this case the primary interest is in large biological datasets which typically have many more parameters than observations so the primary statistical challenge is to develop efficient methods for exploring very large numbers of relationships in relatively small sample sizes. 
-
-%p >> n
-
-%\textit{Discuss big data, some definitions, potential, challenges etc...}
-
-
 \chapter{Association and Non-Linearity}
 
 \subsection*{Background}
-%This section briefly introduces the concepts of random variables, dependence and association.
-%
-%A random variable can be defined as a real-valued function of an experimental outcome \cite{ITP}. A discrete random variable has a probability mass function giving the probability of each value which the random variable can take. A continuous random variable has a Probability Density Function (PDF) such that: 
-%
-%\[
-%P(X \in B) = \int_B f_{X}(x) \,dx 
-%\] 
-%
-%%A function of a random variable is also a random variable. The main interest in this study is in continuous random variables. 
-%Two continuous random variables are jointly continuous when they are associated with the same experiment. They can be described in terms of their joint PDF, which is a positive function satisfying:  
-%
-%\[
-%P((X,Y) \in B) = \iint_{(x,y) \in B} f_{X,Y}(x,y) \,dx \,dy
-%\] 
-%
-%
-%The joint PDF enables the calculation of the probability of any event involving the two random variables. The marginal PDFs of $X$ and $Y$ and can be obtained using the formulas:  
-%
-%\[
-% f_X(x) = \int_{-\infty}^{\infty} f_{X,Y}(x,y) \,dy 
-%\] 
-%
-%and
-%
-%\[
-% f_Y(y) = \int_{-\infty}^{\infty} f_{X,Y}(x,y) \,dx 
-%\] 
-%
-%The joint PDFs of multiple r.v.'s extends naturally, for example the joint PDF of three r.v.s $X$, $Y$ and $Z$ is given by:
-%
-%\[
-%P((X,Y,Z) \in B) = \iiint_{(x,y,z) \in B} f_{X,Y,Z}(x,y,z) \,dx \,dy \,dz
-%\] 
 
 A linear function of two random variables is one that can be written in the form:
 
@@ -419,8 +366,6 @@ Maximal Information Coefficient ($MIC$) is based on the concept that if two rand
 
 The following formal definition of $MIC$ is from \citet{mic2011}: for a grid $G$, let $I_G$ denote the mutual information of the probability distribution induced on the cells of $G$, where the probability of a cell is proportional to the number of points bounded by the cell. $m_{x,y} = \frac{max(I_g)}{log(min(x,y)}$ where $m_{x,y}$ is the $(x,y)$-th entry of the characteristic matrix, and the maximum is taken for all $x$ by $y$ grids $G$. The $MIC$ score is then the maximum of $m_{x,y}$ ordered pairs $(x,y)$ such that $xy < B$, where $B$ is a function of the sample size (the default is $B=n^{0.6}$ but the performance of $MIC$ is sensitive to this tuning parameter).  $MIC$ is implemented in the R $minerva$ \cite{minerva} package.
 
-%The resultant $MIC$ value is then regarded as a relative test statistic for comparing pairwise relationships in a particular dataset rather than a general measure of association between two variables. 
-
 \subsection*{$A$}
 $A$ is a probabilistic measure of association that generalises $R^2$. It has a number of attractive features that make it of potential interest for association analysis, in particular the fact that it is reported\cite{Murrel:2013:Online} to have greater power than other measures of association such as $MIC$ and $dcor$, it extends to the multivariate case (e.g. how $Y$ is associated with both $X$ and $Z$) and can also measure association while controlling for covariates (i.e. partial association, the association between $Y$ and $X$ while controlling for $Z$). Additionally it is also reported to be both general and equitable\cite{Murrel:2013:Online}.
 
@@ -431,9 +376,6 @@ R^2 = 1-\prod_i(\frac{P(x_i,y_i|null)}{P(x_i,y_i|alt)})^{\frac{2}{n}}
 \]
 
 which defines $R^2$ in terms of the probability density of the null and alternative models. In the case of $A$, $\hat{A}$ can be estimated if suitable models for the null and alternative hypotheses can be found. In practice this involves estimating the density at each point of the null and alternative models using kernel density estimation. The choice of null is taken to enforce independence so $P(X,Y)=P(X)P(Y)$, while the alternative is is allowed to be dependent. For a detailed technical description see \citet{Murrel:2013:Online}. For simplicity the remainder of this document refers to $\hat{A}$ as $A$ unless explicitly stated otherwise.  It is implemented in the R $matie$ \cite{matie} package.
-
-
-%Technically $\hat{A}$ is an estimator of $A$ and calculations of $A$ for the same to random variable (\gls{RV}) may differ slightly (about 2 decimal places).  a hyperbolic correction that is made during the estimation
 
 \subsection*{Distance Correlation}
 Distance correlation aims to measure all types of dependence between two or more random variables \cite{energy2013}. For two random vectors $X$ and $Y$ of size $n$, $dcor$ is computed as follows:
@@ -449,13 +391,7 @@ $dcor(X,Y) = \frac{dcov(X,Y)}{\sqrt{dcov(X,X)dcov(Y,Y)}}$
 
 $dcor$ is implemented in the R $energy$ \cite{energy} package.  
 
-%\subsection{Splines}
-%Splines are a class of functions used to fit lines between random variables by constructing piecewise polynomial functions. The degree of curvature is controlled by the order of the spline and the number of 'knots'. Two categories of splines are smoothing splines and regression splines. Smoothing splines use the data points as potential knots and thus penalise for noisiness in the fit. In contrast, regression splines use equally spaced knots. This study used the penalised cubic splines (order 2) implemented in the R package $pspline$. Penalised cubic splines were used by \citet{BayesianGRN} to study non-linear dependencies in gene regulatory networks. The goodness of fit of the spline was assessed by calculating the coefficient of determination $R^2$ for the given spline.
-
-
-
 \section{Assessing Non-Linearity}
-%The preliminary analysis showed that very strong linear relationships exist between the genes and that much of the observed variability can be explained by linear combinations of the genes. It also suggested that non-linear relationships may also exist. 
 The three association measures $MIC$, $A$ and $dcor$ all aim to measure all types of dependence, linear and non-linear, monotonic and non-monotonic etc. between pairs of random variables equally, however none explicitly measures the non-linear association. 
 There are a number of possible ways of trying to assess the amount of non-linear association by partitioning the observed association into linear and non-linear components. \citet{Murrel:2013:Online} implement the following different measures of non-linearity based on $A$ and $R^2$ in the $matie$ R package \cite{matie}. They have been generalised here so that $\theta$ refers to any association measure.
 
@@ -479,8 +415,6 @@ $H_0$: $X$ and $Y$ are independent.
 $H_1$: $X$ and $Y$ are dependent.
 \newline
 
-% The purpose was to explore the power of different measures of association to detect dependence over a range of functional relationships  with varying degrees of random noise in order to understand how they may perform on real data and any potential limitations which may exist. The simulations also explored the effect of sample size and source distribution. 
-
 A previous simulation study by \citet{Tibshirani2011} into the power of $MIC$ vs. $dcor$ found that in most cases $dcor$ was more powerful than $MIC$ and that in the linear case $MIC$ was less powerful than \gls{Pearson}. This power deficiency led the authors to advocate the use of $dcor$ over $MIC$ in large scale exploratory analysis as $MIC$ might lead to too many false positives \cite{Tibshirani2011}. 
 
 This simulation study extends the aforementioned study by including the $\gls{A}$ score, expanding the range of functional relationships explored, studying the effect of differing sample size and also using two source distributions. 
@@ -493,14 +427,6 @@ Let $X$, $Y$ and $Z$ be random variables and let $f(X)$ be a function of interes
 Their motivation for choosing \textit{Uniform(0,1)} distribution was primarily because the authors of $MIC$ had used it in their simulation studies\cite{Tibshirani2011, mic2011}. Exploratory analysis of the lupus dataset suggested that many of the gene expressions have positively skewed distributions, so a \textit{Beta(2,5)} distribution was used to simulate this. 
 
 The main interest was in comparing $\gls{A}$, $MIC$ and $dcor$.  Pearson and Spearman correlation were also included for contrast. Fifteen different functional relationships were studied. The functions are defined in Table \ref{T:functions}. Normally distributed noise was added to each function so that, $y = f(x) + l \times \epsilon$, where $l$ is a scaling parameter controlling the level of noise, $\epsilon$, and $\epsilon \sim N(0, 1)$. In the case of the cubic, exponential, log, step, spike and sine based functions, $l$ was scaled to compensate for the range of $y$. Figure \ref{F:FunctionForms} plots each of these for a sample size of 320 with minimal noise.
-
-%\begin{equation}
-%  f(x)=\begin{cases}
-%    1, & \text{if $x<0$}.\\
-%    0, & \text{otherwise}.
-%  \end{cases}
-%\end{equation}
-
 
 \begin{table}[h]
 \centering
@@ -554,17 +480,9 @@ y =
 
 \section{Power versus Noise}
 In order for an association measure to be practically useful in association analysis it should have reasonable statistical power for noisy data. Ideally it should also be equitable, i.e. it should score equally different types of relationships with equal amounts of noise added. This simulation explored how statistical power varied for the different functional forms for different amounts of Normally distributed noise. A sample size of 320 was used to represent a moderately size biological dataset. (Figure \ref{F:FunctionFormsNoise} in Appendix A shows each functional form following the addition of noise.) 
-%Gene expression data typically contains a large amount of technical and biological variability in addition to 
-%An adapted R script from \citet{Tibshirani2011} was used to compare the power of $A$ with $dcor$, $MIC$, Pearson and Spearman correlation and penalised splines using sixteen different functional relationships (see Figure \ref{F:FunctionForms}) with varying degrees of noise. 
 
 Data was generated using two  distributions, \textit{Uniform(0.1)} and \textit{Beta(2,5)}, so for a  r.v. $X$, $X \in \{0,1\}$. Random noise was generated from a $N(0,1)$ distribution and then scaled by a given noise level (0.1 to 3). The following algorithm was used in the simulation to assess if two r.v.'s $X$ and $Y$ were dependent:
 
-%$H_0$: $X$ and $Y$ are independent.
-
-%$H_1$: $X$ and $Y$ are dependent.
-
-%The simulation algorithm is as follows:
- 
 \begin{enumerate}
 \item For each functional form, $f$, and noise level, $l$:
 \item Generate independent r.v.'s $X,Y$ and $Z$: $X$ and $Z$ from the given distribution (so $X \in \{0,1\}, Z \in \{0,1\}$) and an independent r.v. $Y=f(Z) + l \times \epsilon$, where $\epsilon \sim N(0,1)$.
@@ -576,10 +494,8 @@ Data was generated using two  distributions, \textit{Uniform(0.1)} and \textit{B
 \end{enumerate}
 
 The complete $R$ code, based on that of \citet{Tibshirani2011}, is given in Appendix A. The results in Figure \ref{F:powerNU} suggest that all measures are sensitive to the level of noise and that none of the measures has greater power for all of the functional forms simulated. In particular $A$ appears to have low power for the fourth root, step, exponential, sigmoid and linear cases. It also has lower power than $dcor$ in the cubic cases. Both $A$ and $MIC$ generally outperform $dcor$ for periodic functions most notably for the high frequency sine wave. Interestingly, $A$ has the highest power in detecting the circle and `X' shapes.
-%This suggests that $A$ may have limited usefulness as a measure of association for exploratory analysis depending on how noisy the dataset appears to be and depending on which (if any) functional form is being investigated. 
 
 Simulation results from the skewed distribution were broadly similar to that shown in Figure \ref{F:powerNU} are given in Appendix A.2 (Figure \ref{F:powerNB}). For most functional forms there was a decrease in power, most notably for the step function which showed a reduction in power for all association measures. Both $A$ and $MIC$ also had lower power than Pearson correlation in the quadratic and cubic cases.
-%Spearman and Pearson correlation have similarly low power in non-linear settings.
 
 \begin{figure}[H]
 \begin{centering}
@@ -606,9 +522,6 @@ An adapted version of algorithm given in the previous section was used to explor
 
 Again the algorithm was run with a \textit{Uniform(0,1)} distribution and then with a \textit{Beta(2,5)} distribution to see if a skewed source distribution affected the results. The results for the \textit{Uniform} case are given in Figure \ref{F:powerSizeUN10}. The results show that $A$, $MIC$ and $dcor$ only converged in certain cases but that $dcor$ converged more quickly (i.e. is more powerful on smaller sample sizes) in the linear, quadratic, cubic and exponential cases. The power of $dcor$ was again noticeably low in the high frequency sine case. No measures converged for the step, spike, linear+periodic or varying frequency functions function. $A$ and $MIC$ both failed to converge for $X^{\frac{1}{4}}$.
 
-%\section{Equitability}
-%\textit{Use simulation to explore the equitability property, in particular how $A$ compares with $dcor$ under noise. \citet{Murrel:2013:Online} state that $A$ outperforms $dcor$ but do not indicate how much noise was added.}
-
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=\textwidth]{powerSizeUN10.pdf}
@@ -621,11 +534,6 @@ In the case of the skewed distribution, the performance of all measures generall
 
 Simulations were also run using the maximum level of noise and using a skewed distribution. The results are shown in Figure \ref{F:powerSizeBN30} in Appendix A.2 and show that none of the association measures were powerful at detecting dependence on very noisy relationships even when the sample size was large ($n=1000$).
 
-
-%Are most genes differentially expressed? Want a normalisation technique that removes as much background noise and bias as possible in order to focus on potential biological d differences.
-
-%\cite{BayesianGRN} calculate the following in their simulation studies: True Positive Rate, False Discovery Rate, ROC, and study the following percentage of linearity 0,20,48,72,100.
-
 \section{Discussion}
 The simulation studies focused on how the power of the different measures of association perform in the presence of noise and with different sample sizes. This is of particular relevance to biological datasets which can contain a large amount of technical variability which is not of interest and typically have small sample sizes but many dimensions. 
 
@@ -633,14 +541,10 @@ Unsurprisingly the simulations showed that in general power decreases in the pre
 
 No one measure exceeded all of the others in all of the cases, however on balance the simulation study suggests that $dcor$ should perform better than either $MIC$ or $A$ on the basis of capacity to handle noise and deal with small sample sizes. From a practical perspective if the form of a relationships are unknown then $dcor$ would appear to be the best choice of association measure, possibly in conjunction with Pearson Correlation (to assess non-linearity) and either $A$ or $MIC$ if periodic effects are suspected or known a priori.
 
-%The level of noise is a somewhat relative term but in a real dataset would not be known apriori meaning that a test statistic such as $dcor$ would be preferred over either $MIC$ or $A$. 
-
 There are many other simulation based analyses that could be performed. The noise and size studies both held either size or noise constant, an obvious extension would be to allow both noise and sample size to vary simultaneously to get a more complete power profile.  Further extensions would be to expand the range of functional forms and source distributions and to include three way and partial associations where possible. Additionally it would be of interest to explore  relative performance of $HHG$ \cite{HHG} which has been identified as being of potential use for exploratory association mining. 
 
 \chapter{Exploratory Data Analysis} 
-This section documents exploratory analysis of the training dataset. The objective of this analysis was to explore a subset of gene expression data relevant to lupus in order to search for genes and gene associations of potential interest. A range of supervised and unsupervised techniques were employed. Most of the exploratory analysis analysed lupus patients and controls separately in order to focus on non-linear gene relationships that differ between the two classes. A drawback of this approach is that the sample size for controls is relatively small at 53 observations and hence potentially subject to the power deficiencies identified during simulation. %Some ancillary exploratory analysis is given in the Appendix C.
-
-%The objective of this analysis was to explore a subset of gene expression data relevant to lupus in order to develop techniques that used for association mining on the full test dataset.
+This section documents exploratory analysis of the training dataset. The objective of this analysis was to explore a subset of gene expression data relevant to lupus in order to search for genes and gene associations of potential interest. A range of supervised and unsupervised techniques were employed. Most of the exploratory analysis analysed lupus patients and controls separately in order to focus on non-linear gene relationships that differ between the two classes. A drawback of this approach is that the sample size for controls is relatively small at 53 observations and hence potentially subject to the power deficiencies identified during simulation.
 
 \section{Data} 
 
@@ -732,15 +636,6 @@ Corrplots allow a direct high level view of associations however the density of 
 
 (Note: the $A$ and $dcor$ based corrplots were sign adjusted to allow easier comparison with the Pearson corrplots. This was performed by multiplying the association score by the sign of the corresponding Pearson correlation.) 
 
-%\begin{figure}[H]
-%    \centering
-%    \subfloat[Lupus]{{\includegraphics[width=8cm]{lupusPearson.pdf} }}%
-%    \qquad
-%    \subfloat[Controls]{{\includegraphics[width=8cm]{controlPearson.pdf} }}%
-%    \caption{Corrplot showing some very strong positive and negative Pearson correlations in gene expression in lupus patients.}
-%    \label{F:Corr}
-%\end{figure}
-
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[width=\textwidth]{corrplot3.pdf}
@@ -771,15 +666,6 @@ A variety of dimension reduction techniques were applied to the training dataset
 \end{centering}
 \end{figure}
 
-%\begin{figure}[H]
-%    \centering
-%    \subfloat[The first two principal components.]{{\includegraphics[width=\textwidth]{pc12.pdf} }}%
-%    \qquad    
-%    \subfloat[PC1 loadings.]{{\includegraphics[width=\textwidth]{loadings.pdf} }}%
-%    \caption{Plot (a) shows the first two principal components. Plot (b) shows the loadings of the first PC.}
-%    \label{F:PCA}
-%\end{figure}
-
 \subsection*{Linear Discriminant Analysis}
 Linear Discriminant Analysis (\gls{LDA}) is a form of dimension reduction that, for $k$ given classes attempts to find $k-1$ projected variables called linear discriminants (also called crimcoords). Thus, it attempts to find a reduced dimensional space that maximises inter class distance. It is a linear based technique with the first linear discriminant corresponding to Fisher's linear discriminant function. The remaining crimcoords are often interpreted in a similar way to Principal Components but differ in that they are not orthogonal but by convention are often plotted as such. 
 
@@ -799,14 +685,6 @@ Linear Discriminant Analysis (\gls{LDA}) is a form of dimension reduction that, 
 \end{centering}
 \end{figure}
 
-%\begin{figure}[H]
-%    \centering
-% \subfloat[LDA.]{{\includegraphics[width=\textwidth]{lda.pdf} }}%
-%    \qquad    
-%    \subfloat[LDA scalings.]{{\includegraphics[width=\textwidth]{ldaScalings.pdf} }}%
-%    \caption{(a) shows the first linear discriminant of lupus vs. controls plotted against index. (b) shows the associated scalings.}
-%    \label{F:LDA}
-%\end{figure}
 
 Figure \ref{F:LDA} shows a crimcoord plot of the training dataset using the disease status as the response variable. It suggests that linear discrimination based on gene expression difference between lupus patients and controls is reasonably successful which again suggests the importance of linear relationships in this dataset. In general the two groups are well separated however overlaps exist. The scalings in Figure \ref{F:LDAScalings} suggest that four probes in particular (Probe No's 9, 30 for controls and Probe No 12 an 31 for lupus patients) contribute a large amount to discriminating patients and controls. 
 
@@ -820,46 +698,13 @@ LDA was also performed using Source as the response variable and the results are
 \end{centering}
 \end{figure}
 
-
-%\begin{figure}[H]
-%    \centering
-% \subfloat[LDA.]{{\includegraphics[width=\textwidth]{ldaType.pdf} }}%
-%    \qquad    
-%    \subfloat[LDA scalings.]{{\includegraphics[width=\textwidth]{ldaTypeScalings.pdf} }}%
-%    \caption{(a) shows the first linear discriminant of lupus vs. controls plotted against index showing that linear discrimination between patients and controls is reasonably successful. (b) shows the associated scalings suggesting that three genes in particular play a large role in discriminating lupus patients from controls.}
-%    \label{F:LDAType}
-%\end{figure}
-
 \subsection*{Multidimensional Scaling}
 Multidimensional scaling (MDS) is another form of dimension reduction that is useful for exploratory data analysis. There are a number of different variants of \gls{MDS}. In this case a technique called Sammon scaling was used which creates a non-linear low dimensional projection of the data based on a given distance metric. Sammon scaling has the advantage of being able to preserve small distances in the reduced dimensional space. 
 
 In contrast to the previous analyses, MDS is used to project the genes into two dimensions. In order to try to assess if differences  between $R^2$, $A$ and $dcor$ existed these were all used as distance metrics in the MDS plots in Figure \ref{F:MDS}. Scree plots (not included) suggested that the first two components captured most of information but that 3 or 4 dimensions best describes the data, hence some distortion is present. 
 
- Figure \ref{F:MDS} shows pronounced differences between controls and lupus patients. The scaling plots for the lupus patients show a tight cluster of genes (Probe No 74 to 94) that are reasonably well separated and consistent (ignoring reflection) between the three methods. These genes showed very high Pearson correlation and suggest that the strongest pairwise gene associations can be described well using linear methods. No other obvious gene clusters are visible in the lupus MDS plots although individual gene distances vary considerably between the different methods. 
+Figure \ref{F:MDS} shows pronounced differences between controls and lupus patients. The scaling plots for the lupus patients show a tight cluster of genes (Probe No 74 to 94) that are reasonably well separated and consistent (ignoring reflection) between the three methods. These genes showed very high Pearson correlation and suggest that the strongest pairwise gene associations can be described well using linear methods. No other obvious gene clusters are visible in the lupus MDS plots although individual gene distances vary considerably between the different methods. 
 
-% Sammon scaling based on $R^2$ resulted in a more uniform spacing than scaling based on $A$ which has more clustering. Of potential interest in the $A$ based MDS are the separation of genes 7 and 54. %The potential genes of interest are given in Table \ref{T:MDS}.
-
-
-%\begin{table}[ht]
-%\begin{center}
-%\begin{tabular}{lll}
-%  \hline
-%Type & Description \\ 
-%  \hline
-%$R^2$, $A$ & 214032\_at,  202411\_at, 204415\_at, 213797\_at, 214059\_at, 204439\_at \\
-%& 219211\_at, 202145\_at, 202869\_at, 44673\_at, 205483\_s\_at, \\
-%& 203153\_at, 218400\_at, 219863\_at, 202086\_at, 205569\_at, \\
-%& 227609\_at, 204747\_at, 204972\_at, 241916\_at  \\
-%$A$ & 7 and 54: 207892\_at, 204613\_at \\
-%$A$ & 25, 20, 23 and 21 (241740\_at, 207630\_s\_at, 210171\_s\_at, 228092\_at) \\
-%$A$ & 58, 78,53. 9 10 11 and 12: 200695\_at, 214059\_at, 216551\_x\_at, 204489\_s\_at, \\
-%& 204490\_s\_at, 209835\_x\_at, 210916\_s\_at \\
-%   \hline
-%\end{tabular}
-%\caption{Descriptions of the main variables provided.} 
-%\label{T:MDS}
-%\end{center}
-%\end{table}
 
 \begin{figure}[H]
 \begin{center}
@@ -889,21 +734,6 @@ Three-way & 0.002 \\
 \label{T:MARSFIT}
 \end{table}
 
-%\begin{table}[h]
-%\centering
-%\begin{tabular}{lll}
-%  \hline
-%Variable Interaction & Misclassification Rate & GCV \\ 
-%  \hline
-%None &  0.028 &  0.44 \\ 
-%Two-way &  0.019 & 0.24 \\ 
-%Three-way & 0.002 & 0.07\\
-%   \hline
-%\end{tabular}
-%\caption{Misclassification rate of different MARS based FDA models.} 
-%\label{T:MARSFIT}
-%\end{table}
-
 While the misclassification rate drops to almost zero by allowing two or three way interactions the underlying models are probably over fit to the data. Despite this they provide a means to look at potential interactions of interest. For pairwise relationships the FDA model showed good performance with a training misclassification error of 0.02 (rounded to 2 d.p.). The confusion matrix is  shown in Table \ref{T:confusion1}.  The underlying MARS model had an $R^2$ value of 0.80 (to 2 d.p.). Partial dependency plots showing the relationship of the most important predictor (or predictor pairs) to the FDA discriminant are shown in Figure \ref{F:MARS}. 
 
 \begin{table}[h]
@@ -928,7 +758,7 @@ Control &  47 &  2 \\
 \end{center}
 \end{figure}
 
-Using \gls{FDA} to classify source had mixed results. The overall misclassification rate was $0.20$ but much of this is due to misclassification of source L1 and L2. When appraising classification results it is important to consider the misclassification cost. Given that both of these sources are lupus patients this misclassification may not be costly in of itself. The misclassification of six controls as source L4 would appear to have a greater cost. The associated confusion matrix is given in Table \ref{T:confusion2}. %nd a discriminant plot is given in Figure \ref{F:FDA}
+Using \gls{FDA} to classify source had mixed results. The overall misclassification rate was $0.20$ but much of this is due to misclassification of source L1 and L2. When appraising classification results it is important to consider the misclassification cost. Given that both of these sources are lupus patients this misclassification may not be costly in of itself. The misclassification of six controls as source L4 would appear to have a greater cost. The associated confusion matrix is given in Table \ref{T:confusion2}. 
 
 \begin{table}[h]
 \centering
@@ -948,14 +778,6 @@ C &  47 &   1 &   0 &   0 &   6 &   0 \\
 \label{T:confusion2}
 \end{table}
 
-%\begin{figure}[H]
-%\begin{centering}
-%\includegraphics[width=10cm]{fda.pdf}
-%\caption{2D MDS of the probes of the training data. The upper plot used $1-R^2$ as a distance measure while the lower plot used $1 -  A$.}
-%\label{F:FDA}
-%\end{centering}
-%\end{figure}
-
 \section{Differential Gene Expression}
 Differential gene expression analysis is used to try to understand differences in transcriptional activity between population types which in turn could imply biological differences. In contrast to the other methods in this section it involves formal hypothesis testing. It was used as an exploratory tool in order to:
 
@@ -966,16 +788,6 @@ Differential gene expression analysis is used to try to understand differences i
 \end{enumerate}
 
 The primary interest was in differential expression of single genes between lupus patients and controls. Differences between the sample sources were also tested.
-
-% Bland-Altman plots (also refereed to as MA plots or Tukey mean-difference plots) are used to compare measured quantities visually by plotting the average versus the difference. The Bland-Altman plot in Figure \ref{F:MAplot} suggests pronounced differential expression in lupus patients over controls. 
-%
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width=10cm]{MAplot.pdf}
-%\caption{Bland-Altman plot showing the difference vs the mean in gene expression between lupus patients and controls for all 94 genes.}
-%\label{F:MAplot}
-%\end{center}
-%\end{figure}
 
 A Bioconductor R package called $limma$ \cite{limma} was used to perform the differential expression analysis.  It works by fitting linear models for each gene and can therefore take advantage of the power of linear models to specify complex hypotheses. It also uses a parametric empirical Bayes model to share information between the individual gene models to handle differing levels of variability between genes and between samples and also reduces the influence of outliers. The result is that the global estimate of variability across all genes is combined with the per gene variability to  estimate the variance of  each gene \cite{limma}. While permutation or randomisation tests are often used for this kind of analysis $limma$ has a number of advantages such as the ability to specify contrasts (for example to explore differences in sample sources) and to specify sample correlations e.g. if technical replicates are used.  It is designed to handle small sample sizes and highly dimensional data so is an appropriate choice for the lupus dataset.
 
@@ -992,8 +804,6 @@ While methods such as Bonferroni corrections can be overly conservative, the FDR
 \item Stop at the first $p_i$ that meets this condition, and calculate the `adjusted' $p$-value as $\alpha (i / n)$, using this value of $i$.
 
 \end{enumerate}
-
-%Compared with FDR, FWER has reduced ‘power’ to identify significant differences between patients and controls. The FDR approach adopted by Benjamini and Hochberg (1995) was therefore an appropriate procedure to use in this situation.
 
 A value of $5\%$ was taken to signify differential expression. It is important to note that this is a somewhat arbitrary choice and does not imply biological importance. The interest is in differentially expressed genes where the difference in effect size is large. It is possible to have a significant result as measured by a small $p$-value but which also has a very small effect size and hence is unlikely to be of biological interest. A common convention in microarray studies is to set a minimum for a log fold change value of 1 and  $\alpha = 0.05$ for adjusted $p$-values when searching for differentially expressed genes. This can be seen in the volcano plot in Figure \ref{F:volcano}. The Y-axis is $-log_{10}$ of the adjusted $p$-value. The X-axis is the $log_2$ fold change in gene expression. The black horizontal line corresponds to a $p$-value of $0.05$ while the black vertical line corresponds to a doubling in gene expression from controls to lupus patients. The genes identified as being significantly different between lupus patients and controls and with a log fold change $\ge 1$ are given in Table \ref{T:GEGD}. The genes identified as being most different between each lupus source and controls are given in Table \ref{T:DEGT}. Contrasts were specified as L1 v C, L2 v C, L3 vC, L4 v C and L5 v C. The results are based on an $F$-test combining the five pairwise comparisons \cite{limma}.
 
@@ -1039,30 +849,6 @@ Rank & Probe No & Probe ID & Log Fold Change \\
 \label{T:GEGD}
 \end{centering}
 \end{table}
-
-%\begin{table}[H]
-%\centering
-%\begin{tabular}{cc}
-%  \hline
-%Probe & Log Fold Change  \\ 
-%  \hline
-%214059\_at & 2.82  \\ 
-%  241916\_at & 1.50 \\ 
-%  204747\_at & 1.71 \\ 
-%  204415\_at & 1.88 \\ 
-%  212418\_at & 1.13 \\ 
-%  204439\_at & 2.86 \\ 
-%  213797\_at & 2.69 \\ 
-%  205483\_s\_at & 1.86 \\ 
-%  202411\_at & 3.56 \\ 
-%  219863\_at & 1.80 \\ 
-%  218400\_at & 1.85 \\ 
-%  204972\_at & 1.60 \\ 
-%   \hline
-%\end{tabular}
-%\caption{Differentially expressed genes using a cut off of $\alpha=0.05$ and log fold change $\ge 1$.} 
-%\label{T:GEGD}
-%\end{table}
 
 \begin{table}[h]
 \centering
@@ -1111,10 +897,6 @@ The exploratory analysis suggested the following:
 \item MDS using $A$ or $dcor$ as a distance metric is a potential useful way to try to visualise variables in larger datasets.
 \end{enumerate}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \chapter{Measuring Association: The Training Data}
 
 \section{Two-way Associations}
@@ -1146,7 +928,6 @@ All association and residual association values were analysed visually and using
 
 \subsubsection{Testing Differences between Independent Associations}
 The associations were calculated separately for lupus patients and controls meaning that they are from independent samples and that the difference in association between the two samples may be tested. In the case of correlations the difference in correlation between two independent samples could be tested using Fisher's $r$ to $z$ transformation.  In the case of the associations under study a non-parametric alternative is required, so a sign test based on bootstrapped estimates of the associations was used to estimate the significance of an observed difference as follows:
-%In the case of associations a bootstrap test can be used to estimate the significance of an observed difference as follows:
 
 \begin{enumerate}
 
@@ -1154,8 +935,6 @@ The associations were calculated separately for lupus patients and controls mean
 \item Sample $n=1000$ data points with replacement from the observed data $z_L = \{ (x_{L1},y_{L1}),...,(x_{Ln},y_{Ln}) \}$ and $z_C = \{ (x_{C1},y_{C1}),...,(x_{Cn},y_{Cn}) \}$ to get new data $z_L^*$ and $z_C^*$.
 \item Evaluate the sample association $\hat{\theta_L}^*$ of $z_L^*$ and $\hat{\theta_C}^*$ of $z_C^*$.
 \item Repeat steps 2 and 3 to obtain $\hat{\theta_{L1}}^*,...,\hat{\theta_{L1000}}^*$ and $\hat{\theta_{C1}}^*,...,\hat{\theta_{C1000}}^*$
-%\item Estimate the significance as $\frac{1}{n}\sum^n_{i=1}I(\hat{\theta^*}_{Li} \ge \hat{\theta^*}_{Ci})$.
-%\item Estimate the significance as $\frac{1}{n}\sum^n_{i=1}I(\hat{\theta^*}_{Li} \ge \hat{\theta^*}_{Ci})$.
 \item Let $p$ be the probability that $\hat{\theta^*}_{Li} \ge \hat{\theta^*}_{Ci}$. Estimate the $p$-value of the difference in association using a sign test of the hypothesis: $H_0: p = 0.5$ against the two-sided alternative $H_1: p \ne 0.5$. 
 
 \end{enumerate}
@@ -1171,26 +950,6 @@ In all cases two-sided Wilcoxon rank sum tests provided overwhelming evidence th
 \label{F:associationBox}
 \end{center}
 \end{figure}
-
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width=\textwidth]{associationDistributions.pdf}
-%\caption{Density plots of each association measure and sample type.} 
-%\label{F:associationDistributions}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width=\textwidth]{lcMD.pdf}
-%\caption{Mean difference plots of controls and lupus patients for each association measure.} 
-%\label{F:lcMD}
-%\end{center}
-%\end{figure}
-
-
-%Figure \ref{F:pairsMinusR} shows this more clearly by plotting the pairwise associations for $A$, $MIC$ and $dcor$ minus $R^2$ and indicates that there are differences in non-linear relationships between lupus patients and controls. This was then used as a basis for divisive clustering yielding a tentative hierarchical relationship shown in Figure \ref{F:cluster}.
-
 
 \subsubsection{Comparison of the Association Estimates}
 Bland-Altman \cite{Altman1983} plots (see Figure \ref{F:baTwoway}) were used to visually assess if any systematic differences existed between the measures and also to see if any bias as a result of the sample sample size was identifiable. Comparisons were made of each measurement type separately for lupus patients and controls. The red lines in each plot represent the 95\% limits of agreement between each measurement pair. 
@@ -1224,17 +983,6 @@ In this case, $\tau < \rho$ for all measures in both samples and controls sugges
 \end{centering}
 \end{figure}
 
-%This difference in estimators of association can also be scene in the slopegraph in Figure \ref{F:rank} which shows the top fifty ordered pairwise associations of each estimator. The most striking feature of this plot is that while commonalities exist there are also differences in important relationships identified by the three different measures. The plot additionally shows that some of the pairs are picked by all three estimators but there ranks may differ considerably.
-%
-%\begin{figure}[h]
-%\begin{center}
-%\includegraphics[width=\textwidth]{rank.pdf}
-%\caption{Ranks of the top 50 pairwise non-linear associations as measured by the residual association using $A$, $MIC$ and $dcor$ respectively. There is some agreement between
-%the different measures but some notable gaps exist also which must be explained.} 
-%\label{F:rank}
-%\end{center}
-%\end{figure}
-
 \subsubsection{Strong Associations}
 The main interest is in stronger associations so the results were grouped into the following levels: $\ge 0.01, \ge 0.05, \ge 0.10$. Within these levels discordances may exist but this is of secondary interest.
 
@@ -1250,14 +998,6 @@ Figure \ref{F:levels} shows the results of each association measure separately f
 
 Three pairwise relationships, (Probe No 30:31, 86:76, 42:41) formed the intersection of the associations $\ge 0.90$ for both samples. Plots (not shown) revealed that these had very strong linear relationships and were identified by all association measures. These associations also occurred in lupus patients, with strong ($\ge 0.95$) scores by all association measures. Of these probes, only probe number 86 (219863\_at) was differentially expressed. Because they occurred in both patients and controls they are unlikely to be of interest and hence can be excluded from further consideration. 
 
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width=\textwidth]{control90.pdf}
-%\caption{Scatterplots of 3 pairwise associations $\ge 0.90$ in controls (top) and lupus patients (bottom).} 
-%\label{F:control90}
-%\end{center}
-%\end{figure}
-
 The Venn diagrams in Figure \ref{F:Venn} shows that $dcor$ is the union of the other association measures and that both $MIC$ and $A$ miss a large number (17 and 24 respectively) number of linear relationships. Clearly large differences exist between $dcor$ and both $A$ and $MIC$. 
 
 \begin{figure}
@@ -1269,21 +1009,12 @@ The Venn diagrams in Figure \ref{F:Venn} shows that $dcor$ is the union of the o
     \label{F:Venn}
 \end{figure}
 
-% The plots of $A$, $dcor$ and $MIC$ vs. $R^2$ also show that strong pairwise associations exist when the linear correlation is minimal indicating that these are non-linear relationships. These differences form the basis of a number of measures of non-linear association discussed in the next section.
-
-
-%These measures were adapted for both $MIC$ and $dcor$ and applied to the training dataset for comparative purpuse. The results are shown in Figure \ref{F:pairsMinusR} for all pairwise relationships. Of the four measures the residual association and the non-linear part of association seem more useful as the other two measure, being proportions, do not necessarily reflect the total level of non-linearity. (A simple remedy for this would be to filter the degree of association measured, for example on investigate associations of greater than 0.6.) Both $MIC$ and $dcor$ suggest differences between lupus patients and controls with controls apparently having more non-linear associations in gene expression. The difference looks more pronounced when measured by $dcor$. The results for $A$ appear much more variable than either $MIC$ and $dcor$ and suggest that some very strong non-linear associations exist in lupus patients but not in controls. 
-
-%The exploratory analysis clearly showed that there are very strong linear relationships existing between the genes however the primary question of interest is in non-linear relationships. 
-
 \subsubsection{Non-Linearity}
 The Bland-Altman plots and Kendall's correlation showed that there was very little agreement between the $A$, $dcor$ and $MIC$ based on residual association. In particular, $A$ and $MIC$ based residual association tended to be higher but these pairs also had strong $R^2$ values. This suggests that $dcor$ may potentially produce more stable results for non-linear association mining, in that it produced consistently low values for both residual and partitioned association however further analysis would be needed to verify this.
 
 Kendall's correlation of the residual association and non-linear part of association also showed low concordance within each measure (0.46, 0.37, 0.12 for $A$, $dcor$ and $MIC$ respectively). Rounding the results to 2 d.p. only resulted in very small increases ($\approx$ 0.02) in Kendall's $\tau$. The likely explanation for this is that the main extant two-way relationships are linear in nature meaning that the residual association is very noisy and that there is too little remaining signal for each measure too detect.  This suggests that where associations are suspected to be primarily linear in nature or have a strong linear component, partitioning based assessments of non-linearity are preferable to residual association.
 
 Of the partitioned methods some differences in the ranks given by the non-linear part of association and non-linear proportion of association naturally exist but taken within a predefined threshold level such as $dcor \ge 0.90$ these were minor and made no qualitative difference in the case of the lupus dataset. Both $A$ and $MIC$ missed many of the linear associations, hence their partitioned non-linearity results are discordant with those of $dcor$.
-
-%Analysis based on the four methods specifically focused on non-linearity (residual association, non-linear part of association, non-linear proportion of association, total non-linear variation) also failed to identify any strong non-linear relationships. Residual association showed considerable variability between $A$, $dcor$ and $MIC$. In particular, the $A$, $MIC$ based residual association tended to be higher but artificially so, i.e. the high results were false positives. This suggests that $dcor$ might be produce more stable results for non-linear association mining, in that it produced consistently low values for both residual and partitioned association however further analysis would be needed to verify this.
 
 \subsubsection{Filtering}
 The preceding results can be combined to filter the results into associations of potential interest based on three criteria: $\alpha$, the desired strength of association, $\beta$, the amount of non-linearity and $\gamma$, the difference in association between lupus patients and controls. The results in Figure \ref{F:2wayTop} are based on the following formula:
@@ -1344,28 +1075,10 @@ Table \ref{T:2wayAssociations} compares the corresponding association values bas
 \end{centering}
 \end{table}
 
-
-%
-%\begin{figure}[h]
-%\begin{center}
-%\includegraphics[width=\textwidth]{mnl.pdf}
-%\caption{1D plots of the four different non-linear measures of proportion of association as calculated by $A$, $MIC$ and $dcor$ showing showing clear differences between lupus patients and controls and indicating potential non-linear relationships. The results for $A$ appear to e different from those of $MIC$ and $dcor$.} 
-%\label{F:pairsMinusR}
-%\end{center}
-%\end{figure}
-
 \subsubsection*{Multiple Adaptive Regression Splines}
 MARS models were used as a way to contrast the association results with a classification method. MARS allow binary classification by fitting an adapted logistic regression model but allows the explanatory variables to enter as curved linear basis functions called `hinge' functions and so can handle non-linearity \cite{earth}. A useful feature of MARS models is that the explanatory terms can also be treated linearly and hence the difference in results between linear and non-linear models provides some additional insight into how non-linear relationships may be important for lupus. 
 
 For each of the associations of interest identified, MARS models were built and their goodness of fit was measured. One criterion for assessing the goodness of fit of a MARS model is Generalised Residual Sum of Squares (GRSq, an approximation of RSS that would be measured on independent data, further criteria for interpreting MARS models are given in Section 5.3).  For each of the eighteen two-way associations the GRSq for a linear and non-linear MARS models was calculated. Figure \ref{F:GRSqvAssociation} shows the relationship of associations $\ge 0.90$ against the corresponding MARS model. It shows that by themselves the probe pairs are poor classifiers of lupus but that using `hinge' functions produces a very modest improvement in GRSq in all cases. This is therefore consistent with the results of the two-way association analysis indicating that linear relationships are dominant. It also illustrates the important distinction between association and causation, i.e. the fact that random variables are associated does not imply a causal relationship.
-
-%\begin{figure}[H]
-%\begin{centering}
-%\includegraphics[width=\textwidth]{aucVsValue.pdf}
-%\caption{MARS based AUC vs association for associations $\ge 0.90$.} 
-%\label{F:AUCvAssociation}
-%\end{center}
-%\end{figure}
 
 \begin{figure}[H]
 \begin{centering}
@@ -1374,44 +1087,6 @@ For each of the associations of interest identified, MARS models were built and 
 \label{F:GRSqvAssociation}
 \end{centering}
 \end{figure}
-
-%The AUC was only higher in the linear case for gene pairs showing very strong Pearson correlation ($R^2 > 0.93$). In all other cases classification, as measured by AUC, was moderately improved in the non-linear case (mean $= 0.06$, standard deviation = $0.03$). 
-
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width=\textwidth]{histAUC.pdf}
-%\caption{Histogram showing the difference in AUC between non-linear and linear MARS models.} 
-%\label{F:histAUC}
-%\end{center}
-%\end{figure}
-
-
-
-%Figure \ref{F:curves} shows the top sixteen pairwise associations as measured separately on lupus patients and controls using residual association based on $A$ and $dcor$ respectively. Each plot has a separate smoothing curve for lupus patients and controls fitted using loess \cite{MASS}. Visual examination suggests that a number of possible non-linear relationships may exist between gene pairs. For example some appear sigmoid (eg (a) top left), others quadratic ((a) bottom right) while there is also a possible step change ((a) bottom second from right). Some of the fitted curves appear to be heavily influenced by potential outliers as can be seen by the wide confidence intervals on some of the curves. This is particularly the case in the case of the control derived associations and could reflect the low sample size. The curves in Figure \ref{F:curves} (a) appear to show similar functional forms between patients and controls but higher expression levels in lupus patients. The curves in \ref{F:curves} (b) suggest that different functional forms may exist between patients and controls. However visual analysis may be misleading so more formal discrimination methods are required.
-%
-%\begin{figure}[H]
-%    \centering
-% \subfloat[Lupus.]{{\includegraphics[width=12cm]{lupusCurves.pdf} }}%
-%    \qquad    
-%    \subfloat[Controls.]{{\includegraphics[width=12cm]{controlCurvesDcor.pdf} }}%
-%    \caption{(a) The top 16 non-linear relationships in lupus patients as measured by the residual association using $A$. (b) The top 16 non-linear relationships in controls as measured by the residual association using $dcor$. The plots are ordered left to right, top to bottom by residual association (0.78 to 0.59, and 0.60 to 0.50 respectively). Curves are fitted seperatly for lupus patients and controls using loess. Some clear non-linear relationships can be seen but other plots suggest that outliers may be influencing the results.}
-%    \label{F:curves}
-%\end{figure}
-
-
-
-
-%$dcor$ gives much higher results, is it artificially inflating them, ie. too many false positives or does it have greater power?
-%
-%
-%\textit{Further work}
-%\begin{enumerate}
-%\item \textit{Use rank based list comparision to compare results. There are some bioinformatics packages which partially fit the bill e.g. $OrderedLists$. A draw back of these is that they are designed for a single string/gene and they require identical sets, i.e. only different orders. Perhaps there is scope to include the pairwise nature and also unequal sets. Will do some digging first.
-%\item}
-%\end{enumerate}
-
-
-
 
 \section{Three-way Associations}
 The method for analysing three-way relationships followed that used for two-way associations with the following two exceptions:
@@ -1433,14 +1108,6 @@ The boxplots in Figure \ref{F:3wayBox} show the distributions of each associatio
 \label{F:3wayBox}
 \end{centering}
 \end{figure}
-
-%\begin{figure}[H]
-%\begin{centering}
-%\includegraphics[width=\textwidth]{3waymdLC.pdf}
-%\caption{Bland-Altman plots of controls and lupus patients for each association measure.} 
-%\label{F:lcMD}
-%\end{centering}
-%\end{figure}
 
 \begin{figure}[H]
 \begin{centering}
@@ -1492,8 +1159,6 @@ However this results in 1044 associations of interest many of which contain prob
 
 As with the two-way case, these filters could be adapted on a needs basis. If it is the case that the sole interest is in differentially expressed genes then considerable computational effort could be avoided by only analysing the three-way associations of those genes.
 
- %In the two way  $\ge 0.95$ and $R^2 < 0.90$ were dominated by probe no's 76 to  94 which the exploratory analysis showed had very strong Pearson correlations suggesting that the high association value is not of particular interest but 
-
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[width=15cmh]{3wayFilter.pdf}
@@ -1509,14 +1174,6 @@ As with the two-way case, these filters could be adapted on a needs basis. If it
 \label{F:GRSqvAssociation3way}
 \end{centering}
 \end{figure}
-
-%\begin{figure}[H]
-%\begin{centering}
-%\includegraphics[width=\textwidth]{auc3way.png}
-%\caption{Three-way associations $\ge 90$ versus $AUC$ of MARS model classifying disease status.} 
-%\label{F:3wayAUC}
-%\end{center}
-%\end{figure}
 
 \begin{table}[H]
 \begin{centering}
@@ -1547,17 +1204,12 @@ An additional consideration is the explanatory power of the associations of inte
 
 Generally the results of the three-way analysis was similar to the two-way case, in that $dcor$ identified more relationships of interest than $A$ and was biased upwards from $R^2$. A possible explanation for this is that $dcor$ was able to detect the additional non-linear relationships present that were missed by $R^2$. $A$ missed many of the linear associations detected by $R^2$ suggesting that at the least it needs to be used in conjunction with either $R^2$ or $dcor$ for exploratory association analysis.
 
-%. A practical problem which questions the usefulness of three-way association analysis in this case was the number of high association values identified by both $dcor$ and $R^2$. 
-
 \section{Multiple Adaptive Regression Splines: Variable Importance}
 A large association does not necessarily imply that it is a good predictor of lupus, this was the reason for using MARS to try to classify disease status on the basis of large associations in the previous sections. This section further explores the classification capacity of MARS and how they can be used to select important genes. The results provide additional contrast to the two and three-way association analyses and also investigate some differences between linear and non-linear modelling.
 
 Six different MARS models were compared. Models were built allowing either no, two or three-way interactions, this is called the model degree. All genes were input as either non-linear MARS `hinge' functions or as linear predictors. The response variable was disease status so the underlying model was similar to logistic regression. All models were fitted using 10 step, 2 fold cross validation for robustness. The flexibility of MARS models makes them susceptible to over-fitting so stratified sampling was used to create a 70:30 split of training and test subsets (based on the training data reported on in this chapter). 
 
  The classification  performance of the the model can be assessed by measuring the Area Under the Curve (\gls{AUC}) of the Receiver Operating Characteristic (\gls{ROC}). The ROC is a graph of `sensitivity' (true positive rate) versus `specificity' (false positive rate). AUC takes values from 0 to 1. An AUC close to 1 indicates high classification accuracy (few false positives and negatives) while a random classifier would have an AUC of $\approx 0.5$. The ROCs of each model built on the training data and used to predict the test data are shown in Figure \ref{F:marsROC}. The results show that all models have mixed classification rates with AUCs of 0.90, 0.96, 0.84 for the non-linear models and 0.94, 0.90, 0.94 for the linear ones. If no variable interaction is allowed then the linear models have very slightly improved classification however the amount of permitted variable interaction appears to be more important in classification. The highest AUC is achieved by the two degree non-linear model but this is only a very marginal increase over the linear case. This result is consistent with the exploratory and association analyses which suggest that linear relationships well describe the lupus dataset. A refinement to the analysis would be to consider the relative costs of misclassifying disease status when evaluating model performance.
-
-
-%The differences between the association measures could be due to the power deficiencies of $A$  and $MIC$ leading to false negatives or alternatively suggest an inflated false discovery rate by $dcor$.
 
 \begin{figure}[H]
 \begin{centering}
@@ -1627,11 +1279,6 @@ In the three-way analysis $dcor$ appeared to outperform $A$. The results suggest
 
 In both the two and three-way cases the GRSq of the associated MARS models showed a small improvement by allowing the explanatory variables to be treated as `hinge' functions, providing further evidence that the main associations were linear but that classification could be improved by allowing non-linearities. Using the full set of variables in the MARS model showed that classification performance was primarily related to the amount of variable interaction permitted rather than whether or not the variables were treated linearly or non-linearly. There was partial overlap between the genes selected by MARS and those by $dcor$. As with other some other data mining methods the chosen variables can be artefacts of the underlying variable selection algorithm and so need to be treated with caution. This is one of the areas where explicit association identification offers distinct advantages.
 
-%The analysis used MARS models to classify disease status based on the gene expression data with mixed results.  Part of the motivation  for choosing MARS was to see how an `off-the-shelf' data mining tool might perform at classification and variable selection using linear and non-linear modelling. The variable selection procedure in MARS is known itself to be somewhat variable so results need to be treated with caution. Bagging has been suggested as a way to make variable prediction more reliable however it is currently not implemented in R so was not assessed.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \chapter{Measuring Association: The Test Data}
 This chapter documents the association analysis on the test dataset using the approach developed in Chapter 5. The test dataset consisted of the full Affymetrix biochip described in Section 3.1. As described in Section 3.1 no sample description data was available so only 397 out 1024 observations were identifiable as lupus patients or controls, hence the numbers of controls is very low at only 29 observations.
 
@@ -1676,11 +1323,8 @@ Based on these observed results, $R^2 \le 0.6$ was used as a filter to identify 
 
 A risk of this approach is that the search for associations was only partial so potentially interesting associations may have been missed. Larger computing infrastructures could easily handle the workload required for a full evaluation of all associations. However, regardless of the size of the computing resources available, limits will always exists and the filtering approaches adopted could be easily scaled up and lend themselves to parallelisation.
 
-% . Computational challenges arose when trying to measure two-way associations on the test dataset due to the large number (1494650475) of pairs making it a big data problem in that it could not fit into the 16Gb of RAM available. The solution to this was to use the observed concordance between  Pearson correlation and $dcor$ association to identify potentially interesting associations. These associations were then measured using the more computationally intensive $dcor$, $A$ and $MIC$. 
-
 
 \section{Differential Expression}
-%Bland-Altman plots (also refereed to as MA plots or Tukey mean-difference plots) are used to compare measured quantities visually by plotting the average versus the difference. The Bland-Altman plot in Figure \ref{F:MAplot} suggests pronounced differential expression in lupus patients over controls. 
 All genes were tested for differential expression between lupus patients and controls. Figure \ref{F:BDVolcano} (a) shows a mean-difference plot suggesting that some genes show a large difference between controls and lupus patients. Figure \ref{F:BDVolcano} (b) shows a volcano plot of the FDR adjusted $p$-values. The number of significant results is surprisingly high but only 119 of these had a log fold change $\ge 1$, these are given in Appendix \ref{T:bigDE}. Genes are differentially expressed in both directions, in contrast to the training dataset where all differentially expressed genes were higher in lupus patients than controls. All of the differentially expressed genes from the training data are also differentially expressed in the test data with a log fold change $\ge 1$. No additional genes of biological interest were differentially expressed in the test data. 
 
 \begin{figure}[H]
@@ -1691,82 +1335,6 @@ All genes were tested for differential expression between lupus patients and con
     \caption{(a) shows the MA or mean difference plot of lupus patients and controls for the test data. (b) shows a volcano plot showing the results of the $limma$ based differential expression (DE) analysis between lupus patients and controls.}
     \label{F:BDVolcano}
 \end{figure}
-
-%\begin{table}[H]
-%\begin{center}
-%\begin{tabular}{cllcc}
-%  \hline
-%Rank & Probe No & Probe ID & Log Fold Change & DE in Test \\ 
-%  \hline
-%1 & 54649 & AFFX-r2-Bs-dap-3\_at & 2.37 &  \\ 
-%  2 & 54623 & AFFX-DapX-3\_at & 2.18 &  \\ 
-%  3 & 33848 & 224588\_at & 2.08 &  \\ 
-%  4 & 11860 & 202411\_at & 2.05 & Y \\ 
-%  5 & 54651 & AFFX-r2-Bs-dap-M\_at & 2.02 &  \\ 
-%  6 & 36926 & 227671\_at & 1.84 &  \\ 
-%  7 & 54625 & AFFX-DapX-M\_at & 1.78 &  \\ 
-%  8 & 31009 & 221728\_x\_at & 1.71 &  \\ 
-%  9 & 23518 & 214218\_s\_at & 1.68 &  \\ 
-%  10 & 33850 & 224590\_at & 1.66 &  \\ 
-%  11 & 13887 & 204439\_at & 1.64 & Y \\ 
-%  12 & 54650 & AFFX-r2-Bs-dap-5\_at & 1.59 &  \\ 
-%  13 & 23359 & 214059\_at & 1.51 & Y \\ 
-%  14 & 23753 & 214453\_s\_at & 1.48 &  \\ 
-%  15 & 33849 & 224589\_at & 1.39 &  \\ 
-%  16 & 23098 & 213797\_at & 1.37 & Y \\ 
-%  17 & 54624 & AFFX-DapX-5\_at & 1.37 &  \\ 
-%  18 & 20761 & 211430\_s\_at & 1.33 &  \\ 
-%  19 & 51875 & 242625\_at & 1.29 & \\ 
-%  20 & 54658 & AFFX-r2-Bs-thr-3\_s\_at & 1.28 &  \\ 
-%  21 & 28804 & 219519\_s\_at & 1.22 &  \\ 
-%  22 & 49229 & 239979\_at & 1.13 &  \\ 
-%  23 & 11594 & 202145\_at & 1.12 & Y \\ 
-%  24 & 14931 & 205483\_s\_at & 1.12 & Y \\ 
-%  25 & 26313 & 217022\_s\_at & 1.11 &  \\ 
-%  26 & 54659 & AFFX-r2-Bs-thr-5\_s\_at & 1.10 &  \\ 
-%  27 & 54660 & AFFX-r2-Bs-thr-M\_s\_at & 1.07 & \\ 
-%  28 & 21898 & 212592\_at & 1.04 &  \\ 
-%  29 & 28496 & 219211\_at & 1.04 & Y \\ 
-%  30 & 44526 & 235276\_at & 1.03 &  \\ 
-%  31 & 54670 & AFFX-ThrX-3\_at & 1.03 &  \\ 
-%  32 & 27686 & 218400\_at & 1.02 & Y \\ 
-%  33 & 54655 & AFFX-r2-Bs-phe-3\_at & 1.01 &  \\ 
-%  34 & 54657 & AFFX-r2-Bs-phe-M\_at & 1.00 &  \\ 
-%  35 & 54672 & AFFX-ThrX-M\_at & 1.00 &  \\ 
-%   \hline
-%\end{tabular}
-%\caption{Differentially expressed genes between lupus patients and controls in the test data} 
-%\label{T:bigDE}
-%\end{center}
-%\end{table}
-%
-%
-%\begin{table}[H]
-%\begin{center}
-%\begin{tabular}{rrlr}
-%  \hline
-%Rank & Probe No & Probe ID & Log Fold Change \\ 
-%  \hline
-%38 & 11535 & 202086\_at & 0.98 \\ 
-%  41 & 36864 & 227609\_at & 0.95 \\ 
-%  47 & 12602 & 203153\_at & 0.94 \\ 
-%  49 & 21724 & 212418\_at & 0.92 \\ 
-%  50 & 14195 & 204747\_at & 0.92 \\ 
-%  53 & 15017 & 205569\_at & 0.91 \\ 
-%  57 & 14420 & 204972\_at & 0.90 \\ 
-%  63 & 29148 & 219863\_at & 0.86 \\ 
-%  71 & 28969 & 219684\_at & 0.82 \\ 
-%  80 & 12318 & 202869\_at & 0.77 \\ 
-%  89 & 51062 & 241812\_at & 0.76 \\ 
-%  98 & 54404 & 44673\_at & 0.72 \\ 
-%  137 & 51166 & 241916\_at & 0.65 \\ 
-%  247 & 13863 & 204415\_at & 0.50 \\ 
-%   \hline
-%\end{tabular}
-%\caption{Genes that were differentially expressed in the training data but not in the test data.} 
-%\label{T:deDiff}
-%\end{center}
-%\end{table}
 
 \section{Two-way Association}
 The computational issues described in Section 6.1 meant that the full set of all two-way associations could not be analysed. These results are based on the reduced set:
@@ -1808,9 +1376,7 @@ where $X$ and $Y$ are probes, $\theta = R^2$, $i \in {1:54675}$ and $\alpha = 0.
     \label{F:VennBig}
 \end{figure}
 
-Figure \ref{F:VennBig} compares each measure showing that $dcor$ identifies almost all associations identified by $A$ and $MIC$. Of the four associations in the control group identified by A and MIC but missed by $dcor$, all had $dcor$ values of 0.88 and 0.89 so are just an artefact of the threshold applied rather than interesting associations missed by $dcor$. %The same applied to the four associations in the control group identified by A and MIC but missed by $dcor$. 
-
-%Visual examination of the two-way associations suggest that many of the differences in $dcor$ ad $R^2$ were due to the presence of 3 suspected outliers, (one lupus MA43\_1311, and two controls MA43\_M.107, MA43\_M.184). Recalculations of the the association with these removed confirmed the influence of these observations. The actual status of these observations would need to be explained before they could be ruled out from the analysis, however, for illustration their effect was removed to draw attention to other associations of interest. It also highlights $dcors$ robustness to the presence of outliers. Following their removal the number of associations of interest reduces from X to Y. The top 16 results for controls are shown in Figure R. The plots show...
+Figure \ref{F:VennBig} compares each measure showing that $dcor$ identifies almost all associations identified by $A$ and $MIC$. Of the four associations in the control group identified by A and MIC but missed by $dcor$, all had $dcor$ values of 0.88 and 0.89 so are just an artefact of the threshold applied rather than interesting associations missed by $dcor$. 
 
 The analysis found 57 pairs showing large differences between lupus patients and controls. These involved 53 genes, 38 of which were differentially expressed.  Scatterplots of the top sixteen results for lupus patients are shown in Figure \ref{F:bigScatter}, again loess was used to fit smoothed lines to the data. The plots show some evidence of quadratic relationships. The non-linear part of association was again between 10\% and 15\%.  None of the associations of interest from the training dataset matched those in the test dataset. The reason for this was that in the test dataset these relationships had very strong linear associations ($R^2$ between 0.87 and 0.91) so the non-linear part of association was correspondingly low (between 3\% and 4\%). Bootstrap estimates of association for these pairs are provided in Appendix \ref{T:bigAE}.
 
@@ -1854,8 +1420,6 @@ $dcor$ again outperformed both $A$ and $MIC$ in terms of associations identified
 
 The analysis presented in this chapter showed how association analysis can be used in high dimensional datasets where the number of parameters, $p >> n$, the number of observations. The fact that all of the samples in the test dataset could not be identified meant that the sample size for controls was extremely small at only 29 observations. The net effect of this is that the actual results, in terms of gene associations identified, need to be treated with extreme caution. The more important point is that the methods used can be applied to analyse associations in large biological datasets. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Discussion and Further Work}
 The goal of the analysis was two-fold: to compare differences in non-linear associations between lupus patients and controls and to compare different measures of association themselves. 
 
@@ -1879,21 +1443,11 @@ A refinement to the classification analysis would be to consider misclassificati
 
 Comparing the results of the association analysis, classification analysis and differential expression analysis is not straight forward as they each have different objectives. When considered in terms of gene involvement the results did show some overlap  but also differences. Many of these differences were a consequence of the somewhat arbitrary thresholds set for what constituted a strong association or a differentially expressed gene. The goal here was to illustrate a general approach that could be tailored to specific needs. In reality such thresholds of evidence are likely to be context specific but general results might still by improved by involving domain expertise to attempt to quantify biologically meaningful levels.
 
-
-%What effect might linear standardisation have on finding non-linear relationships?
-
-
-
-%mean centre, if we don't then the distances between two genes will be dominated by the differences in means which is not necessarily of interest. The main objective is to find genes which vary together but do not necessarily have similar levels.
-
-
 \bibliographystyle{unsrtnat}
 \bibliography{refdatabase}
 
 \printglossary
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
 
 \chapter{Simulation Code and Results}
